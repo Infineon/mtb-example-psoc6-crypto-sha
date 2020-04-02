@@ -8,7 +8,7 @@
 *
  .
 *******************************************************************************
-*  (c) 2019, Cypress Semiconductor Corporation. All rights reserved.
+* (c) 2019-2020, Cypress Semiconductor Corporation. All rights reserved.
 *******************************************************************************
 * This software, including source code, documentation and related materials
 * ("Software"), is owned by Cypress Semiconductor Corporation or one of its
@@ -85,7 +85,7 @@ typedef enum
     MESSAGE_ENTER_NEW,
     MESSAGE_READY,
     MESSAGE_NOT_READY
-}message_status_t;
+} message_status_t;
 
 /*******************************************************************************
 * Function Prototypes
@@ -123,11 +123,11 @@ int main(void)
     cy_en_crypto_status_t crypto_status = CY_CRYPTO_NOT_INITIALIZED;
 
     /* Variable to track the status of the message entered by the user */
-    message_status_t msgStatus = MESSAGE_ENTER_NEW;
+    message_status_t msg_status = MESSAGE_ENTER_NEW;
 
     uint8_t msg_size = 0;
 
-    bool uartStatus = false;
+    bool uart_status = false;
 
     /* Initialize the device and board peripherals */
     result = cybsp_init();
@@ -135,7 +135,7 @@ int main(void)
      /* Board init failed. Stop program execution */
     if (result != CY_RSLT_SUCCESS)
     {
-    CY_ASSERT(0);
+        CY_ASSERT(0);
     }
 
     /* Enable global interrupts */
@@ -158,28 +158,28 @@ int main(void)
     /* Enable the Crypto block */
     Cy_Crypto_Core_Enable(CRYPTO);
 
-    for(;;)
+    for (;;)
     {
-        switch(msgStatus)
+        switch (msg_status)
         {
             case MESSAGE_ENTER_NEW:
                 memset(message, 0, MAX_MESSAGE_SIZE);
                 msg_size = 0;
                 printf("\r\nEnter the message:\r\n");
                 uart_result = cyhal_uart_getc(&cy_retarget_io_uart_obj, &message[msg_size], 1);
-                msgStatus = MESSAGE_NOT_READY;
+                msg_status = MESSAGE_NOT_READY;
                 break;
 
             case MESSAGE_NOT_READY:
-                uartStatus = cyhal_uart_is_rx_active(&cy_retarget_io_uart_obj);
-                if(!uartStatus && uart_result == CY_RSLT_SUCCESS)
+                uart_status = cyhal_uart_is_rx_active(&cy_retarget_io_uart_obj);
+                if (!uart_status && uart_result == CY_RSLT_SUCCESS)
                 {
                     /* Check if the ENTER Key is pressed. If pressed, set the message
                      * status as MESSAGE_READY */
-                    if(message[msg_size] == ASCII_RETURN_CARRIAGE)
+                    if (message[msg_size] == ASCII_RETURN_CARRIAGE)
                     {
                         message[msg_size]='\0';
-                        msgStatus = MESSAGE_READY;
+                        msg_status = MESSAGE_READY;
                     }
                     else
                     {
@@ -187,12 +187,12 @@ int main(void)
                         msg_size++;
                         /* Check if size of the message  exceeds MAX_MESSAGE_SIZE
                          * (inclusive of the string terminating character '\0')*/
-                        if(msg_size > (MAX_MESSAGE_SIZE - 1))
+                        if (msg_size > (MAX_MESSAGE_SIZE - 1))
                         {
                             printf("\r\n\nMessage length exceeds 100 characters!!!"\
                             " Please enter a shorter message\r\nor edit the macro MAX_MESSAGE_SIZE"\
                             " to suit your message size\r\n");
-                            msgStatus = MESSAGE_ENTER_NEW;
+                            msg_status = MESSAGE_ENTER_NEW;
                             break;
                         }
                     }
@@ -207,7 +207,7 @@ int main(void)
                 printf("\r\n\nHash Value for the message:\r\n\n");
                 print_msg_digest(hash, MESSAGE_DIGEST_SIZE);
 
-                msgStatus = MESSAGE_ENTER_NEW;
+                msg_status = MESSAGE_ENTER_NEW;
                 break;
 
             default:
@@ -233,9 +233,9 @@ int main(void)
 void print_msg_digest(uint8_t* data, uint8_t len)
 {
     char print[10];
-    for(uint32 i=0; i < len; i++)
+    for (uint32 i=0; i < len; i++)
     {
-        if((i % BYTES_PER_LINE) == 0)
+        if ((i % BYTES_PER_LINE) == 0)
         {
             printf("\r\n");
         }
