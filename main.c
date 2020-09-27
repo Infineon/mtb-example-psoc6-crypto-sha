@@ -57,6 +57,8 @@
 
 #define ASCII_RETURN_CARRIAGE               (0x0D)
 
+#define UART_TIMEOUT_MS                     (1u)
+
 #define SCREEN_HEADER "\r\n__________________________________________________"\
                   "____________________________\r\n*\t\tCE220511 PSoC 6 MCU "\
                   "Cryptography: SHA Demonstration\r\n*\r\n*\tThis code example"\
@@ -119,20 +121,21 @@ CY_ALIGN(4) uint8_t hash[MESSAGE_DIGEST_SIZE];
 *******************************************************************************/
 int main(void)
 {
-    cy_rslt_t result, uart_result;
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+    cy_rslt_t uart_result = CY_RSLT_SUCCESS;
     cy_en_crypto_status_t crypto_status = CY_CRYPTO_NOT_INITIALIZED;
 
-    /* Variable to track the status of the message entered by the user */
+    /* Variable to track the status of the message entered by the user. */
     message_status_t msg_status = MESSAGE_ENTER_NEW;
 
     uint8_t msg_size = 0;
 
     bool uart_status = false;
 
-    /* Initialize the device and board peripherals */
+    /* Initialize the device and board peripherals. */
     result = cybsp_init();
 
-     /* Board init failed. Stop program execution */
+     /* Board init failed. Stop program execution. */
     if (result != CY_RSLT_SUCCESS)
     {
         CY_ASSERT(0);
@@ -142,20 +145,21 @@ int main(void)
     __enable_irq();
     
     /* Initialize retarget-io to use the debug UART port */
-    result = cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX, CY_RETARGET_IO_BAUDRATE);
+    result = cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
+                                 CY_RETARGET_IO_BAUDRATE);
     
-    /* retarget-io init failed. Stop program execution */
+    /* retarget-io init failed. Stop program execution. */
     if (result != CY_RSLT_SUCCESS)
     {
         CY_ASSERT(0);
     }
 
-    /* \x1b[2J\x1b[;H - ANSI ESC sequence for clear screen */
+    /* \x1b[2J\x1b[;H - ANSI ESC sequence for clear screen. */
     printf(CLEAR_SCREEN);
 
     printf(SCREEN_HEADER);
 
-    /* Enable the Crypto block */
+    /* Enable the Crypto block. */
     Cy_Crypto_Core_Enable(CRYPTO);
 
     for (;;)
@@ -166,16 +170,19 @@ int main(void)
                 memset(message, 0, MAX_MESSAGE_SIZE);
                 msg_size = 0;
                 printf("\r\nEnter the message:\r\n");
-                uart_result = cyhal_uart_getc(&cy_retarget_io_uart_obj, &message[msg_size], 1);
+                uart_result = cyhal_uart_getc(&cy_retarget_io_uart_obj,
+                                              &message[msg_size],
+                                              UART_TIMEOUT_MS);
                 msg_status = MESSAGE_NOT_READY;
                 break;
 
             case MESSAGE_NOT_READY:
                 uart_status = cyhal_uart_is_rx_active(&cy_retarget_io_uart_obj);
-                if (!uart_status && uart_result == CY_RSLT_SUCCESS)
+                if ((!uart_status) && (uart_result == CY_RSLT_SUCCESS))
                 {
-                    /* Check if the ENTER Key is pressed. If pressed, set the message
-                     * status as MESSAGE_READY */
+                    /* Check if the ENTER Key is pressed. If pressed,
+                     * set the message status as MESSAGE_READY.
+                     */
                     if (message[msg_size] == ASCII_RETURN_CARRIAGE)
                     {
                         message[msg_size]='\0';
@@ -183,29 +190,39 @@ int main(void)
                     }
                     else
                     {
-                        cyhal_uart_putc(&cy_retarget_io_uart_obj, message[msg_size]);
+                        cyhal_uart_putc(&cy_retarget_io_uart_obj,
+                                        message[msg_size]);
                         msg_size++;
                         /* Check if size of the message  exceeds MAX_MESSAGE_SIZE
-                         * (inclusive of the string terminating character '\0')*/
+                         * (inclusive of the string terminating character '\0')
+                         */
                         if (msg_size > (MAX_MESSAGE_SIZE - 1))
                         {
-                            printf("\r\n\nMessage length exceeds 100 characters!!!"\
-                            " Please enter a shorter message\r\nor edit the macro MAX_MESSAGE_SIZE"\
-                            " to suit your message size\r\n");
+                            printf("\r\n\nMessage length exceeds 100 characters!!!"
+                                   " Please enter a shorter message\r\nor edit the macro"
+                                   " MAX_MESSAGE_SIZE to suit your message size\r\n");
                             msg_status = MESSAGE_ENTER_NEW;
                             break;
                         }
                     }
                 }
-                uart_result = cyhal_uart_getc(&cy_retarget_io_uart_obj, &message[msg_size], 1);
+                uart_result = cyhal_uart_getc(&cy_retarget_io_uart_obj,
+                                              &message[msg_size],
+                                              UART_TIMEOUT_MS);
                 break;
 
             case MESSAGE_READY:            
-                /* Perform the message digest generation using SHA-256 algorithm */
-                crypto_status = Cy_Crypto_Core_Sha(CRYPTO, message, msg_size, hash, CY_CRYPTO_MODE_SHA256);
+                /* Perform the message digest generation using SHA-256
+                 * algorithm.
+                 */
+                crypto_status = Cy_Crypto_Core_Sha(CRYPTO, message, msg_size,
+                                                   hash, CY_CRYPTO_MODE_SHA256);
 
-                printf("\r\n\nHash Value for the message:\r\n\n");
-                print_msg_digest(hash, MESSAGE_DIGEST_SIZE);
+                if(crypto_status == CY_CRYPTO_SUCCESS)
+                {
+                    printf("\r\n\nHash Value for the message:\r\n\n");
+                    print_msg_digest(hash, MESSAGE_DIGEST_SIZE);
+                }
 
                 msg_status = MESSAGE_ENTER_NEW;
                 break;
@@ -245,6 +262,5 @@ void print_msg_digest(uint8_t* data, uint8_t len)
     printf("\r\n");
     printf(SCREEN_HEADER1);
 }
-
 
 /* [] END OF FILE */

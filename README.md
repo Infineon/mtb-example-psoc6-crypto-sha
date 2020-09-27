@@ -1,16 +1,24 @@
 # PSoC 6 MCU Cryptography: SHA Demonstration
 
-This code example shows how to generate a 32-byte hash value or message digest for an arbitrary user input message with the SHA2 algorithm using the Cryptographic hardware block in PSoC® 6 MCU. The example further shows that any change in the message results in a unique hash value for the message. The hash value generated for the message is displayed on a UART terminal emulator.
+This code example shows how to generate a 32-byte hash value or message digest for an arbitrary user input message with the SHA-2 algorithm using the Cryptographic hardware block in PSoC® 6 MCU. The example further shows that any change in the message results in a unique hash value for the message. The hash value generated for the message is displayed on a UART terminal emulator.
 
 ## Requirements
 
-- [ModusToolbox™ software](https://www.cypress.com/products/modustoolbox-software-environment) v2.1
-- Programming Language: C
+- [ModusToolbox® software](https://www.cypress.com/products/modustoolbox-software-environment) v2.2  
+    
+    **Note:** This code example version requires ModusToolbox software version 2.2 or later and is not backward compatible with v2.1 or older versions. If you can't move to ModusToolbox v2.2, please use the latest compatible version of this example: [latest-v1.X](https://github.com/cypresssemiconductorco/mtb-example-psoc6-crypto-sha/tree/latest-v1.X).  
+- Board Support Package (BSP) minimum required version: 2.0.0  
+- Programming Language: C  
 - Associated Parts: All [PSoC® 6 MCU](http://www.cypress.com/PSoC6) parts
 
-## Supported Kits
+## Supported Toolchains (make variable 'TOOLCHAIN')
 
-- [PSoC 6 Wi-Fi BT Prototyping Kit](https://www.cypress.com/CY8CPROTO-062-4343W) (CY8CPROTO-062-4343W) - Default target
+- GNU Arm Embedded Compiler v9.3.1 (GCC_ARM) - Default value of `TOOLCHAIN`
+- Arm compiler v6.11 (ARM)
+- IAR C/C++ compiler v8.42.2 (IAR)
+
+## Supported Kits (make variable 'TARGET')
+- [PSoC 6 Wi-Fi BT Prototyping Kit](https://www.cypress.com/CY8CPROTO-062-4343W) (CY8CPROTO-062-4343W) - Default value of `TARGET`
 - [PSoC 6 WiFi-BT Pioneer Kit](https://www.cypress.com/CY8CKIT-062-WiFi-BT) (CY8CKIT-062-WIFI-BT)
 - [PSoC 6 BLE Pioneer Kit](https://www.cypress.com/CY8CKIT-062-BLE) (CY8CKIT-062-BLE)
 - [PSoC 6 BLE Prototyping Kit](https://www.cypress.com/CY8CPROTO-063-BLE) (CY8CPROTO-063-BLE)
@@ -18,13 +26,13 @@ This code example shows how to generate a 32-byte hash value or message digest f
 - [PSoC 62S1 Wi-Fi BT Pioneer Kit](https://www.cypress.com/CYW9P62S1-43438EVB-01) (CYW9P62S1-43438EVB-01)
 - [PSoC 62S1 Wi-Fi BT Pioneer Kit](https://www.cypress.com/CYW9P62S1-43012EVB-01) (CYW9P62S1-43012EVB-01)
 - [PSoC 62S3 Wi-Fi BT Prototyping Kit](https://www.cypress.com/CY8CPROTO-062S3-4343W) (CY8CPROTO-062S3-4343W)
-
+- [PSoC 64 Secure Boot Wi-Fi BT Pioneer Kit](http://www.cypress.com/CY8CKIT-064B0S2-4343W) (CY8CKIT-064B0S2-4343W)
 
 ## Hardware Setup
 
 This example uses the board's default configuration. See the kit user guide to ensure that the board is configured correctly.
 
-**Note**: The PSoC 6 BLE Pioneer Kit and the PSoC 6 WiFi-BT Pioneer Kit ship with KitProg2 installed. ModusToolbox software requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/cypresssemiconductorco/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
+**Note:** The PSoC 6 BLE Pioneer Kit (CY8CKIT-062-BLE) and the PSoC 6 WiFi-BT Pioneer Kit (CY8CKIT-062-WIFI-BT) ship with KitProg2 installed. The ModusToolbox software requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/cypresssemiconductorco/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
 ## Software Setup
 
@@ -34,101 +42,111 @@ Install a terminal emulator if you don't have one. Instructions in this document
 
 ### In Eclipse IDE for ModusToolbox:
 
-1. Click the **New Application** link in the Quick Panel (or, use **File** > **New** > **ModusToolbox Application**).
+1. Click the **New Application** link in the **Quick Panel** (or, use **File** > **New** > **ModusToolbox Application**).
 
 2. Pick a kit supported by the code example from the list shown in the **Project Creator - Choose Board Support Package (BSP)** dialog.
 
-   When you select a supported kit, the example is reconfigured automatically to work with the kit. To work with a different supported kit later, use the **Library Manager** to choose the BSP for the supported kit. You can use the Library Manager to select or update the BSP and firmware libraries used in this application. To access the Library Manager, right-click the application name from the Project Workspace window in the IDE, and select **ModusToolbox** > **Library Manager**.
+   When you select a supported kit, the example is reconfigured automatically to work with the kit. To work with a different supported kit later, use the [Library Manager](https://www.cypress.com/ModusToolboxLibraryManager) to choose the BSP for the supported kit. You can use the Library Manager to select or update the BSP and firmware libraries used in this application. To access the Library Manager, click on the link from the Quick Panel. 
 
    You can also just start the application creation process again and select a different kit.
 
    If you want to use the application for a kit not listed here, you may need to update the source files. If the kit does not have the required resources, the application may not work.
 
-3. In the **Project Creator - Choose Board Support Package (BSP)** dialog, choose the example.
+3. In the **Project Creator - Select Application** dialog, choose the example by enabling the checkbox.
 
-4. Optionally, update the **Application Name:** and **Location** fields with the application name and local path where the application is created.
+4. Optionally, change the suggested **New Application Name**.
 
-5. Click **Create** and complete the application creation process.
+5. Enter the local path in the **Application(s) Root Path** field to indicate where the application needs to be created. 
 
-For more details, see the Eclipse IDE for ModusToolbox User Guide: *{ModusToolbox install directory}/ide_{version}/docs/mt_ide_user_guide.pdf*.
+   Applications that can share libraries can be placed in the same root path.
+
+6. Click **Create** to complete the application creation process.
+
+For more details, see the [Eclipse IDE for ModusToolbox User Guide](https://www.cypress.com/MTBEclipseIDEUserGuide) (locally available at *{ModusToolbox install directory}/ide_{version}/docs/mt_ide_user_guide.pdf*).
 
 ### In Command-line Interface (CLI):
 
 1. Download and unzip this repository onto your local machine, or clone the repository.
 
-2. Open a CLI terminal and navigate to the application folder. On Linux and macOS, you can use any terminal application. On Windows, navigate to the modus-shell directory (*{ModusToolbox install directory}/tools_\<version>/modus-shell*) and run *Cygwin.bat*.
+2. Open a CLI terminal and navigate to the application folder.
+
+   On Linux and macOS, you can use any terminal application. On Windows, open the **modus-shell** app from the Start menu.
+
+   **Note:** Ensure that the *deps* folder contains the required BSP file (*TARGET_xxx.mtb*) corresponding to the TARGET. Use the Library Manager (`make modlibs` command) to select and download the BSP file. If the selected kit does not have the required resources or is not [supported](#supported-kits-make-variable-target), the application may not work. 
 
 3. Import the required libraries by executing the `make getlibs` command.
 
 ### In Third-party IDEs:
 
-1. Follow the instructions from the CLI section to download or clone the repository, and import the libraries using the `make getlibs` command.
+1. Follow the instructions from the [CLI](#in-command-line-interface-cli) section to download or clone the repository, and import the libraries using the `make getlibs` command.
 
 2. Export the application to a supported IDE using the `make <ide>` command.
 
 3. Follow the instructions displayed in the terminal to create or import the application as an IDE project.
 
-For more details, see the *Exporting to IDEs* section of the ModusToolbox User Guide: *{ModusToolbox install directory}/ide_{version}/docs/mtb_user_guide.pdf*.
+For more details, see the "Exporting to IDEs" section of the [ModusToolbox User Guide](https://www.cypress.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox install directory}/docs_{version}/mtb_user_guide.pdf*.
+
 ## Operation
 
-1. Connect the board to your PC using the provided USB cable through the USB connector.
+If using a PSoC 64 Secure MCU kit (like CY8CKIT-064B0S2-4343W), the PSoC 64 Secure MCU must be provisioned with keys and policies before being programmed. Follow the instructions in the [Secure Boot SDK User Guide](https://www.cypress.com/documentation/software-and-drivers/psoc-64-secure-mcu-secure-boot-sdk-user-guide) to provision the device. If the kit is already provisioned, copy-paste the keys and policy folder to the application folder.
+
+1. Connect the board to your PC using the provided USB cable through the KitProg3 USB connector.
 
 2. Open a terminal program and select the KitProg3 COM port. Set the serial port parameters to 8N1 and 115200 baud.
 
 3. Program the board.
 
-   ### Using Eclipse IDE for ModusToolbox:
+   - **Using Eclipse IDE for ModusToolbox:**
 
-   1. Select the application project in the Project Explorer.
-   
-   2. In the **Quick Panel**, scroll down, and click **\<Application Name> Program (KitProg3)**.
+      1. Select the application project in the Project Explorer.
 
-   ### Using CLI:
+      2. In the **Quick Panel**, scroll down, and click **\<Application Name> Program (KitProg3_MiniProg4)**.
 
-   1. From the terminal, execute the `make program` command to build and program the application using the default toolchain to the default target. You can specify a target and toolchain manually:
-        ```
-        make program TARGET=<BSP> TOOLCHAIN=<toolchain>
-        ```
-        Example:
+   - **Using CLI:**
 
-        ```
-        make program TARGET=CY8CPROTO-062-4343W TOOLCHAIN=GCC_ARM
-        ```
-        **Note**:  Before building the application, ensure that the *deps* folder contains the BSP file (*TARGET_xxx.lib*) corresponding to the TARGET. Execute the `make getlibs` command to fetch the BSP contents before building the application.
+     From the terminal, execute the `make program` command to build and program the application using the default toolchain to the default target. You can specify a target and toolchain manually:
+      ```
+      make program TARGET=<BSP> TOOLCHAIN=<toolchain>
+      ```
+
+      Example:
+      ```
+      make program TARGET=CY8CPROTO-062-4343W TOOLCHAIN=GCC_ARM
+      ```
  
 
-4. Press the reset button on the kit and enter the message for which hash value or the message digest should be generated. The generated hash value is printed on the UART terminal. Note that for every input message, the SHA operation generates a unique hash value.
+4. Press the reset button on the kit and enter the message for which the hash value or message digest should be generated. The generated hash value is printed on the UART terminal. Note that for every input message, the SHA operation generates a unique hash value.
 
 For example, the message “The quick brown fox jumps over the lazy dog”, which uses every letter in the English alphabets, has a message digest value completely different from the message digest value for the message “The quick brown fox jumps over the lazy Dog” even though the variation is minor (‘D’ instead of ‘d’).
 
-##### Figure 1. Sample Output as Displayed on Tera Term
+**Figure 1. Sample Output as Displayed on Tera Term**
 
-![Figure1](images/Figure1.png)
+![Figure1](images/uart-output.png)
 
 ## Debugging
 
-You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (KitProg3)** configuration in the **Quick Panel**.  For more details, see *Program and Debug* section in the Eclipse IDE for ModusToolbox User Guide: *{ModusToolbox install directory}/ide_{version}/docs/mt_ide_user_guide.pdf*.
+You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (KitProg3_MiniProg4)** configuration in the **Quick Panel**. For more details, see the "Program and Debug" section in the [Eclipse IDE for ModusToolbox User Guide](https://www.cypress.com/MTBEclipseIDEUserGuide).
+
+**Note:** **(Only while debugging)** On the CM4 CPU, some code in `main()` may execute before the debugger halts at the beginning of `main()`. This means that some code executes twice - before the debugger stops execution, and again after the debugger resets the program counter to the beginning of `main()`. See [KBA231071](https://community.cypress.com/docs/DOC-21143) to learn about this and for the workaround.
 
 ## Design and Implementation
 
-Secure Hash Algorithm is a function that takes a message of arbitrary length and reduces it to a fixed length residue or message digest, after performing a series of mathematically defined operations that practically guarantee that any change in the message will change the hash value. A hash value is used for message authentication by transmitting a message with a hash value appended to it and recalculating the message hash value using the same algorithm at the recipient’s end. If the hashes differ, it indicates that the message has been corrupted.
+Secure Hash Algorithm (SHA) is a function that takes a message of arbitrary length and reduces it to a fixed length residue or message digest, after performing a series of mathematically defined operations that practically guarantee that any change in the message will change the hash value. A hash value is used for message authentication by transmitting a message with a hash value appended to it and recalculating the message hash value using the same algorithm at the recipient’s end. If the hashes differ, it indicates that the message has been corrupted.
 
-In this example, the user input message is read from the UART terminal and a 32-byte long hash value is generated using the SHA2 algorithm. For any arbitrary message, a 32-byte long hash value is generated. The 32-byte hash value for the user input message is then displayed on the UART terminal emulator. Note that in this example, the maximum message size is restricted to 100 characters. If you need to increase the message size change the macro MAX_MESSAGE_SIZE in the *main.c* to the message size that you require.
+In this example, the user input message is read from the UART terminal and a 32-byte long hash value is generated using the SHA-2 algorithm. For any arbitrary message, a 32-byte hash value is generated. The 32-byte hash value for the user input message is then displayed on the UART terminal emulator. Note that in this example, the maximum message size is restricted to 100 characters. If you need to increase the message size change the `MAX_MESSAGE_SIZE` macro in the *main.c* to the message size that you require.
 
+**Figure 2. Firmware Flowchart**
 
-##### Figure 2. Firmware Flow Chart
-
-![Figure2](images/Figure2.png)
+![Figure2](images/flow-chart.png)
 
 ### Resources and Settings
 
-[Table 1](#table-1-application-resources) lists the ModusToolbox resources used in this example, and how they are used in the design.
-
-##### Table 1. Application Resources
+**Table 1. Application Resources**
 
 | Resource  |  Alias/Object     |    Purpose     |
 | :------- | :------------    | :------------ |
 | UART (HAL) |cy_retarget_io_uart_obj| UART HAL object used by Retarget-IO for Debug UART port |
+| Crypto (PDL) |CRYPTO| SHA2 based message digest using the Crypto hardware block |
 
 ## Related Resources
 
@@ -147,16 +165,17 @@ In this example, the user input message is read from the UART terminal and a 32-
 | [CY8CPROTO-063-BLE](https://www.cypress.com/CY8CPROTO-063-BLE) PSoC 6 BLE Prototyping Kit | [CY8CPROTO-062-4343W](https://www.cypress.com/CY8CPROTO-062-4343W) PSoC 6 Wi-Fi BT Prototyping Kit |
 | [CY8CKIT-062S2-43012](https://www.cypress.com/CY8CKIT-062S2-43012) PSoC 62S2 Wi-Fi BT Pioneer Kit | [CY8CPROTO-062S3-4343W](https://www.cypress.com/CY8CPROTO-062S3-4343W) PSoC 62S3 Wi-Fi BT Prototyping Kit |
 | [CYW9P62S1-43438EVB-01](https://www.cypress.com/CYW9P62S1-43438EVB-01) PSoC 62S1 Wi-Fi BT Pioneer Kit | [CYW9P62S1-43012EVB-01](https://www.cypress.com/CYW9P62S1-43012EVB-01) PSoC 62S1 Wi-Fi BT Pioneer Kit |                                                              |
+|[CY8CKIT-064B0S2-4343W](http://www.cypress.com/CY8CKIT-064B0S2-4343W) PSoC 64 Secure Boot Wi-Fi BT Pioneer Kit|  |                                                              |
 | **Libraries**                                                 |                                                              |
-| PSoC 6 Peripheral Driver Library (PDL) and docs                    | [psoc6pdl](https://github.com/cypresssemiconductorco/psoc6pdl) on GitHub |
-| Cypress Hardware Abstraction Layer (HAL) Library and docs          | [psoc6hal](https://github.com/cypresssemiconductorco/psoc6hal) on GitHub |
-| RetargetIO - A utility library to retarget the standard input/output (STDIO) messages to a UART port | [retarget-io](https://github.com/cypresssemiconductorco/retarget-io) on GitHub |
+| PSoC 6 Peripheral Driver Library (PDL) and docs  | [psoc6pdl](https://github.com/cypresssemiconductorco/psoc6pdl) on GitHub |
+| Cypress Hardware Abstraction Layer (HAL) Library and docs     | [psoc6hal](https://github.com/cypresssemiconductorco/psoc6hal) on GitHub |
+| Retarget IO - A utility library to retarget the standard input/output (STDIO) messages to a UART port | [retarget-io](https://github.com/cypresssemiconductorco/retarget-io) on GitHub |
 | **Middleware**                                               |                                                              |
-| CapSense library and docs                                    | [capsense](https://github.com/cypresssemiconductorco/capsense) on GitHub |
+| CapSense® library and docs                                    | [capsense](https://github.com/cypresssemiconductorco/capsense) on GitHub |
 | Links to all PSoC 6 MCU Middleware                           | [psoc6-middleware](https://github.com/cypresssemiconductorco/psoc6-middleware) on GitHub |
 | **Tools**                                                    |                                                              |
-| [Eclipse IDE for ModusToolbox](https://www.cypress.com/modustoolbox)     | The multi-platform, Eclipse-based Integrated Development Environment (IDE) that supports application configuration and development for PSoC 6 MCU and IoT designers.             |
-| [PSoC Creator](https://www.cypress.com/products/psoc-creator-integrated-design-environment-ide) | The Cypress IDE for PSoC and FM0+ MCU development.            |
+| [Eclipse IDE for ModusToolbox](https://www.cypress.com/modustoolbox)     | The cross-platform, Eclipse-based IDE for IoT designers that supports application configuration and development targeting converged MCU and wireless systems.      |
+| [PSoC Creator™](https://www.cypress.com/products/psoc-creator-integrated-design-environment-ide) | The Cypress IDE for PSoC and FM0+ MCU development.            |
 
 ## Other Resources
 
@@ -166,18 +185,20 @@ For PSoC 6 MCU devices, see [How to Design with PSoC 6 MCU - KBA223067](https://
 
 ## Document History
 
-Document Title: CE220511 - PSoC 6 MCU Cryptography: SHA Demonstration
+Document Title: *CE220511 - PSoC 6 MCU Cryptography: SHA Demonstration*
 
 | Version | Description of Change |
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
 | 1.1.0   | Updated to support ModusToolbox software v2.1, Added new kits<br> Cosmetic changes to code  |
+| 2.0.0   | Major update to support ModusToolbox software v2.2, added support for new kits<br> This version is not backward compatible with ModusToolbox software v2.1  |
+
 
 ------
 
 All other trademarks or registered trademarks referenced herein are the property of their respective owners.
 
-![Banner](images/Banner.png)
+![banner](images/ifx-cy-banner.png)
 
 -------------------------------------------------------------------------------
 
