@@ -2,6 +2,8 @@
 
 This code example shows how to generate a 32-byte hash value or message digest for an arbitrary user input message with the SHA-2 algorithm using the Cryptographic hardware block in PSoC® 6 MCU. The example further shows that any change in the message results in a unique hash value for the message. The hash value generated for the message is displayed on a UART terminal emulator.
 
+[Provide feedback on this Code Example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMjA1MTEiLCJTcGVjIE51bWJlciI6IjAwMi0yMDUxMSIsIkRvYyBUaXRsZSI6IlBTb0MgNiBNQ1UgQ3J5cHRvZ3JhcGh5OiBTSEEgRGVtb25zdHJhdGlvbiIsInJpZCI6InZrdmsiLCJEb2MgdmVyc2lvbiI6IjIuMS4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJQU09DIn0=)
+
 ## Requirements
 
 - [ModusToolbox® software](https://www.cypress.com/products/modustoolbox-software-environment) v2.2  
@@ -27,6 +29,7 @@ This code example shows how to generate a 32-byte hash value or message digest f
 - [PSoC 62S1 Wi-Fi BT Pioneer Kit](https://www.cypress.com/CYW9P62S1-43012EVB-01) (CYW9P62S1-43012EVB-01)
 - [PSoC 62S3 Wi-Fi BT Prototyping Kit](https://www.cypress.com/CY8CPROTO-062S3-4343W) (CY8CPROTO-062S3-4343W)
 - [PSoC 64 Secure Boot Wi-Fi BT Pioneer Kit](http://www.cypress.com/CY8CKIT-064B0S2-4343W) (CY8CKIT-064B0S2-4343W)
+- Rapid IoT Connect Developer Kit (CYSBSYSKIT-DEV-01)
 
 ## Hardware Setup
 
@@ -165,7 +168,7 @@ In this example, the user input message is read from the UART terminal and a 32-
 | [CY8CPROTO-063-BLE](https://www.cypress.com/CY8CPROTO-063-BLE) PSoC 6 BLE Prototyping Kit | [CY8CPROTO-062-4343W](https://www.cypress.com/CY8CPROTO-062-4343W) PSoC 6 Wi-Fi BT Prototyping Kit |
 | [CY8CKIT-062S2-43012](https://www.cypress.com/CY8CKIT-062S2-43012) PSoC 62S2 Wi-Fi BT Pioneer Kit | [CY8CPROTO-062S3-4343W](https://www.cypress.com/CY8CPROTO-062S3-4343W) PSoC 62S3 Wi-Fi BT Prototyping Kit |
 | [CYW9P62S1-43438EVB-01](https://www.cypress.com/CYW9P62S1-43438EVB-01) PSoC 62S1 Wi-Fi BT Pioneer Kit | [CYW9P62S1-43012EVB-01](https://www.cypress.com/CYW9P62S1-43012EVB-01) PSoC 62S1 Wi-Fi BT Pioneer Kit |                                                              |
-|[CY8CKIT-064B0S2-4343W](http://www.cypress.com/CY8CKIT-064B0S2-4343W) PSoC 64 Secure Boot Wi-Fi BT Pioneer Kit|  |                                                              |
+|[CY8CKIT-064B0S2-4343W](http://www.cypress.com/CY8CKIT-064B0S2-4343W) PSoC 64 Secure Boot Wi-Fi BT Pioneer Kit| [CYSBSYSKIT-DEV-01] Rapid IoT Connect Developer Kit |                                                             |
 | **Libraries**                                                 |                                                              |
 | PSoC 6 Peripheral Driver Library (PDL) and docs  | [psoc6pdl](https://github.com/cypresssemiconductorco/psoc6pdl) on GitHub |
 | Cypress Hardware Abstraction Layer (HAL) Library and docs     | [psoc6hal](https://github.com/cypresssemiconductorco/psoc6hal) on GitHub |
@@ -192,7 +195,7 @@ Document Title: *CE220511 - PSoC 6 MCU Cryptography: SHA Demonstration*
 | 1.0.0   | New code example      |
 | 1.1.0   | Updated to support ModusToolbox software v2.1, Added new kits<br> Cosmetic changes to code  |
 | 2.0.0   | Major update to support ModusToolbox software v2.2, added support for new kits<br> This version is not backward compatible with ModusToolbox software v2.1  |
-
+| 2.1.0   | Added support for CYSBSYSKIT-DEV-01 Rapid IoT Connect Developer Kit |
 
 ------
 
