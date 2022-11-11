@@ -7,7 +7,7 @@
 * Related Document: See README.md
 *
 *******************************************************************************
-* Copyright 2019-2021, Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2019-2022, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 *
 * This software, including source code, documentation and related
@@ -214,7 +214,7 @@ int main(void)
                                               UART_TIMEOUT_MS);
                 break;
 
-            case MESSAGE_READY:            
+            case MESSAGE_READY:
                 /* Perform the message digest generation using SHA-256
                  * algorithm.
                  */
